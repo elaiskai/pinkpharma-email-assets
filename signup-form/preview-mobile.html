@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Pinkpharma - mobile popup</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, #fff0f7 0%, #ffe1ee 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    color: #3a1a2c;
+  }
+
+  /* Demo toggle */
+  .demo-toggle {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    background: #FFFFFF;
+    border-radius: 999px;
+    padding: 4px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    display: flex;
+    gap: 4px;
+    z-index: 100;
+  }
+  .demo-toggle button {
+    border: none;
+    background: transparent;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #9c8693;
+    cursor: pointer;
+  }
+  .demo-toggle button.active {
+    background: #C70C7F;
+    color: #FFFFFF;
+  }
+
+  /* Mobile popup - phone-frame style */
+  .phone {
+    width: 100%;
+    max-width: 380px;
+    border-radius: 28px;
+    overflow: hidden;
+    background: #FFFFFF;
+    box-shadow: 0 20px 50px rgba(199, 12, 127, 0.20), 0 6px 18px rgba(0,0,0,0.05);
+    position: relative;
+  }
+
+  /* Top promo strip */
+  .promo-strip {
+    background: #C70C7F;
+    color: #FFFFFF;
+    padding: 12px 16px 12px 16px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    position: relative;
+  }
+
+  .close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.18);
+    border: none;
+    cursor: pointer;
+    color: #FFFFFF;
+    font-size: 22px;
+    font-weight: 300;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease;
+  }
+  .close:hover { background: rgba(255, 255, 255, 0.32); }
+
+  /* Hero image */
+  .hero {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: #fff0f7 url('https://cdn.jsdelivr.net/gh/elaiskai/pinkpharma-email-assets@main/signup-form/popup-hero-real.png') center/cover no-repeat;
+    display: block;
+  }
+  .hero.gifts {
+    background-image: url('https://cdn.jsdelivr.net/gh/elaiskai/pinkpharma-email-assets@main/signup-form/popup-hero-gifts.png');
+  }
+
+  /* Content */
+  .content {
+    padding: 28px 24px 24px;
+    text-align: center;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #C70C7F;
+    margin-bottom: 14px;
+  }
+
+  h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #3a1a2c;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-bottom: 22px;
+  }
+  h1 .accent { color: #C70C7F; }
+
+  form { display: flex; flex-direction: column; gap: 10px; }
+
+  input[type="email"] {
+    width: 100%;
+    padding: 16px 18px;
+    border: 1.5px solid #f0d6e2;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 400;
+    color: #3a1a2c;
+    background: #FFFFFF;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    text-align: center;
+  }
+  input::placeholder { color: #c9b3bf; font-weight: 300; }
+  input:focus {
+    border-color: #C70C7F;
+    box-shadow: 0 0 0 3px rgba(199, 12, 127, 0.10);
+  }
+
+  button.cta {
+    width: 100%;
+    padding: 17px 20px;
+    background: #C70C7F;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.05s ease;
+    box-shadow: 0 6px 18px rgba(199, 12, 127, 0.28);
+  }
+  button.cta:hover { background: #a8086a; }
+  button.cta:active { transform: scale(0.98); }
+
+  .legal {
+    margin-top: 16px;
+    font-size: 11px;
+    font-weight: 300;
+    color: #9c8693;
+    line-height: 1.55;
+    text-align: center;
+  }
+
+  /* Success state */
+  .success { display: none; padding: 40px 24px 32px; text-align: center; }
+  .success.active { display: block; }
+  .success .check {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #C70C7F 0%, #a8086a 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    box-shadow: 0 8px 20px rgba(199, 12, 127, 0.30);
+  }
+  .success .check svg { width: 26px; height: 26px; stroke: #FFFFFF; stroke-width: 3; fill: none; }
+  .success h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #C70C7F;
+    margin-bottom: 12px;
+  }
+  .success p { font-size: 14px; color: #3a1a2c; line-height: 1.55; margin-bottom: 8px; }
+  .success .small { font-size: 12px; color: #6b5562; margin-bottom: 24px; font-weight: 300; }
+  .success a.shop {
+    display: inline-block;
+    padding: 14px 28px;
+    background: #C70C7F;
+    color: #FFFFFF;
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<div class="demo-toggle">
+  <button id="t1" class="active" onclick="showState('form')">Forma</button>
+  <button id="t2" onclick="showState('success')">Pateikta</button>
+  <button id="t3" onclick="swapHero()">Hero ↻</button>
+</div>
+
+<div class="phone">
+
+  <!-- Top promo strip -->
+  <div class="promo-strip">
+    10% NUOLAIDA PIRMAM PIRKINIUI
+    <button class="close" aria-label="Uždaryti">&times;</button>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero" id="heroImg"></div>
+
+  <!-- Content -->
+  <div class="content" id="formState">
+    <div class="eyebrow">Tavo vaistinė. Tavo kalba.</div>
+    <h1>Pradėk pažintį su Pinkpharma su <span class="accent">10% nuolaida</span> pirmam pirkiniui</h1>
+
+    <form onsubmit="event.preventDefault(); showState('success');">
+      <input type="email" id="email" name="email" placeholder="Jūsų el. paštas" autocomplete="email" required>
+      <button type="submit" class="cta">Gauti nuolaidą</button>
+    </form>
+
+    <p class="legal">Spausdama „Gauti nuolaidą" sutinki gauti Pinkpharma rinkodaros pranešimus. Atsisakyti gali bet kada vienu paspaudimu.</p>
+  </div>
+
+  <!-- Success -->
+  <div class="success" id="successState">
+    <div class="check">
+      <svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"></polyline></svg>
+    </div>
+    <h2>Ačiū, kad prisijungei!</h2>
+    <p>Patikrink savo el. paštą.</p>
+    <p class="small">10% nuolaidos kodas jau kelyje.<br>Jei nematai - patikrink „Reklama" skiltį.</p>
+    <a href="https://pinkpharma.lt/" class="shop">Apsilankyti parduotuvėje</a>
+  </div>
+
+</div>
+
+<script>
+  let heroVariant = 'real';
+  function showState(state) {
+    const form = document.getElementById('formState');
+    const success = document.getElementById('successState');
+    const t1 = document.getElementById('t1');
+    const t2 = document.getElementById('t2');
+    if (state === 'form') {
+      form.style.display = 'block';
+      success.classList.remove('active');
+      t1.classList.add('active'); t2.classList.remove('active');
+    } else {
+      form.style.display = 'none';
+      success.classList.add('active');
+      t2.classList.add('active'); t1.classList.remove('active');
+    }
+  }
+  function swapHero() {
+    const h = document.getElementById('heroImg');
+    if (heroVariant === 'real') {
+      h.classList.add('gifts');
+      heroVariant = 'gifts';
+    } else {
+      h.classList.remove('gifts');
+      heroVariant = 'real';
+    }
+  }
+</script>
+
+</body>
+</html>
