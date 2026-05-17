@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Pinkpharma - prenumerata (desktop)</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, #fff0f7 0%, #ffe1ee 50%, #fde6f1 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    color: #3a1a2c;
+  }
+
+  /* Demo toggle */
+  .demo-toggle {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    background: #FFFFFF;
+    border-radius: 999px;
+    padding: 4px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    display: flex;
+    gap: 4px;
+    font-family: 'Poppins', sans-serif;
+    z-index: 100;
+  }
+  .demo-toggle button {
+    border: none;
+    background: transparent;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #9c8693;
+    cursor: pointer;
+  }
+  .demo-toggle button.active {
+    background: #C70C7F;
+    color: #FFFFFF;
+  }
+
+  /* Modal */
+  .modal {
+    width: 100%;
+    max-width: 880px;
+    background: #FFFFFF;
+    border-radius: 24px;
+    box-shadow: 0 30px 80px rgba(199, 12, 127, 0.22), 0 6px 18px rgba(0,0,0,0.05);
+    overflow: hidden;
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 520px;
+  }
+
+  .close {
+    position: absolute;
+    top: 18px;
+    right: 20px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    border: none;
+    cursor: pointer;
+    color: #C70C7F;
+    font-size: 20px;
+    font-weight: 300;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: background 0.15s ease, transform 0.15s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .close:hover { background: #FFFFFF; transform: rotate(90deg); }
+
+  /* LEFT PANEL - editorial */
+  .hero {
+    background:
+      radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.18) 0%, transparent 50%),
+      radial-gradient(circle at 20% 80%, rgba(255, 182, 193, 0.35) 0%, transparent 55%),
+      linear-gradient(135deg, #C70C7F 0%, #a8086a 60%, #8a0556 100%);
+    color: #FFFFFF;
+    padding: 56px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 182, 193, 0.25) 0%, transparent 70%);
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    bottom: -80px;
+    left: -60px;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.10) 0%, transparent 70%);
+  }
+  .hero-content { position: relative; z-index: 2; }
+
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: #FFB6C1;
+    margin-bottom: 28px;
+  }
+
+  .hero h1 {
+    font-size: 44px;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+    color: #FFFFFF;
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 500;
+    color: #FFD4E5;
+  }
+
+  .hero .offer-badge {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    padding: 10px 18px;
+    border-radius: 999px;
+    margin-bottom: 24px;
+  }
+  .hero .offer-badge .num {
+    font-size: 18px;
+    font-weight: 700;
+    color: #FFFFFF;
+  }
+  .hero .offer-badge .label {
+    font-size: 12px;
+    font-weight: 400;
+    color: #FFD4E5;
+    letter-spacing: 0.02em;
+  }
+
+  .hero p.body {
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.92);
+    max-width: 320px;
+  }
+
+  .hero .perks {
+    list-style: none;
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    z-index: 2;
+  }
+  .hero .perks li {
+    font-size: 13px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.92);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .hero .perks li::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background: #FFB6C1;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* RIGHT PANEL - form */
+  .card {
+    padding: 56px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+  }
+
+  .card .title-row {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #C70C7F;
+    margin-bottom: 12px;
+  }
+
+  .card h2 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #3a1a2c;
+    line-height: 1.2;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .card .sub {
+    font-size: 14px;
+    font-weight: 300;
+    color: #6b5562;
+    line-height: 1.55;
+    margin-bottom: 28px;
+  }
+
+  form { display: flex; flex-direction: column; gap: 12px; }
+  .field { position: relative; text-align: left; }
+  label {
+    position: absolute;
+    top: -8px;
+    left: 14px;
+    background: #FFFFFF;
+    padding: 0 6px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #C70C7F;
+    letter-spacing: 0.04em;
+  }
+  input[type="text"], input[type="email"] {
+    width: 100%;
+    padding: 15px 16px;
+    border: 1.5px solid #f0d6e2;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 400;
+    color: #3a1a2c;
+    background: #FFFFFF;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  input::placeholder { color: #c9b3bf; font-weight: 300; }
+  input:focus {
+    border-color: #C70C7F;
+    box-shadow: 0 0 0 3px rgba(199, 12, 127, 0.10);
+  }
+
+  button.cta {
+    margin-top: 8px;
+    width: 100%;
+    padding: 17px 24px;
+    background: #C70C7F;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.05s ease, box-shadow 0.15s ease;
+    box-shadow: 0 6px 18px rgba(199, 12, 127, 0.28);
+  }
+  button.cta:hover { background: #a8086a; box-shadow: 0 8px 22px rgba(199, 12, 127, 0.35); }
+  button.cta:active { transform: scale(0.99); }
+
+  .legal {
+    margin-top: 18px;
+    font-size: 11px;
+    font-weight: 300;
+    color: #9c8693;
+    line-height: 1.55;
+  }
+  .legal a { color: #C70C7F; text-decoration: underline; }
+
+  .skip {
+    margin-top: 12px;
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 400;
+    color: #9c8693;
+    cursor: pointer;
+    text-decoration: underline;
+    text-align: left;
+    padding: 0;
+  }
+  .skip:hover { color: #C70C7F; }
+
+  /* Success state - replaces right panel */
+  .success {
+    display: none;
+    padding: 56px 48px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .success.active { display: flex; }
+  .success .check {
+    width: 72px;
+    height: 72px;
+    background: linear-gradient(135deg, #C70C7F 0%, #a8086a 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 22px rgba(199, 12, 127, 0.35);
+  }
+  .success .check svg { width: 32px; height: 32px; stroke: #FFFFFF; stroke-width: 3; fill: none; }
+  .success h3 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #C70C7F;
+    margin-bottom: 14px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .success p {
+    font-size: 15px;
+    font-weight: 400;
+    color: #3a1a2c;
+    line-height: 1.55;
+    margin-bottom: 8px;
+    max-width: 320px;
+  }
+  .success .small {
+    font-size: 13px;
+    font-weight: 300;
+    color: #6b5562;
+    margin-top: 4px;
+    margin-bottom: 28px;
+    max-width: 300px;
+  }
+  .success a.shop {
+    display: inline-block;
+    padding: 15px 32px;
+    background: #C70C7F;
+    color: #FFFFFF;
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    box-shadow: 0 6px 18px rgba(199, 12, 127, 0.28);
+    transition: background 0.15s ease;
+  }
+  .success a.shop:hover { background: #a8086a; }
+
+  /* Tablet */
+  @media (max-width: 880px) {
+    .modal {
+      max-width: 480px;
+      grid-template-columns: 1fr;
+      min-height: 0;
+    }
+    .hero {
+      padding: 40px 36px;
+    }
+    .hero h1 { font-size: 32px; }
+    .card, .success { padding: 36px 32px; }
+  }
+
+  /* Mobile */
+  @media (max-width: 480px) {
+    body { padding: 16px; }
+    .hero { padding: 32px 24px; }
+    .hero h1 { font-size: 26px; }
+    .hero .perks { margin-top: 20px; }
+    .card, .success { padding: 32px 24px; }
+    .card h2 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="demo-toggle">
+  <button id="t1" class="active" onclick="showState('form')">Forma</button>
+  <button id="t2" onclick="showState('success')">Pateikta</button>
+</div>
+
+<div class="modal">
+  <button class="close" aria-label="Uždaryti">&times;</button>
+
+  <!-- LEFT: editorial hero -->
+  <div class="hero">
+    <div class="hero-content">
+      <div class="eyebrow">Pinkpharma</div>
+      <h1>Sveika, <em>gražuole.</em></h1>
+      <div class="offer-badge">
+        <span class="num">-10%</span>
+        <span class="label">pirmam pirkiniui</span>
+      </div>
+      <p class="body">Vaistinė, kuri kalba moteriškai. Be sterilios baltos, be korporatyvinio tono.</p>
+    </div>
+    <ul class="perks">
+      <li>Naujienos pirmoms</li>
+      <li>Asmeniniai pasiūlymai</li>
+      <li>Be spam'o, be ilgų tekstų</li>
+    </ul>
+  </div>
+
+  <!-- RIGHT: form -->
+  <div class="card" id="formState">
+    <div class="title-row">Prisijunk prie bendruomenės</div>
+    <h2>Gauk 10% nuolaidą</h2>
+    <p class="sub">Palik el. paštą - nuolaidos kodas atkeliaus per kelias minutes.</p>
+
+    <form onsubmit="event.preventDefault(); showState('success');">
+      <div class="field">
+        <label for="name">Vardas</label>
+        <input type="text" id="name" name="name" placeholder="Kaip į tave kreiptis?" autocomplete="given-name">
+      </div>
+      <div class="field">
+        <label for="email">El. paštas</label>
+        <input type="email" id="email" name="email" placeholder="tavo@elpastas.lt" autocomplete="email" required>
+      </div>
+      <button type="submit" class="cta">Noriu prisijungti</button>
+    </form>
+
+    <p class="legal">Spausdama mygtuką sutinki gauti rinkodaros pranešimus. Atsisakyti gali bet kada. <a href="https://pinkpharma.lt/privatumo-politika/">Privatumo politika</a></p>
+
+    <button class="skip" onclick="document.querySelector('.modal').style.display='none'">Ne dabar, ačiū</button>
+  </div>
+
+  <!-- RIGHT: success (replaces card on submit) -->
+  <div class="success" id="successState">
+    <div class="check">
+      <svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"></polyline></svg>
+    </div>
+    <h3>Ačiū, kad prisijungei!</h3>
+    <p>Patikrink savo el. paštą.</p>
+    <p class="small">10% nuolaidos kodas jau kelyje. <br>Jei nematai - patikrink „Reklama" skiltį.</p>
+    <a href="https://pinkpharma.lt/" class="shop">Apsilankyti parduotuvėje</a>
+  </div>
+</div>
+
+<script>
+  function showState(state) {
+    const form = document.getElementById('formState');
+    const success = document.getElementById('successState');
+    const t1 = document.getElementById('t1');
+    const t2 = document.getElementById('t2');
+    if (state === 'form') {
+      form.style.display = 'flex';
+      success.classList.remove('active');
+      t1.classList.add('active'); t2.classList.remove('active');
+    } else {
+      form.style.display = 'none';
+      success.classList.add('active');
+      t2.classList.add('active'); t1.classList.remove('active');
+    }
+  }
+</script>
+
+</body>
+</html>
